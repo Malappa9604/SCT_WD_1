@@ -3,416 +3,437 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-<title>THREADS | Clothing Store</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREADS | Fashion Store</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,sans-serif;color:#292522;background:#faf9f6}
+button,input{font:inherit}
+button,a{cursor:pointer}
+a{text-decoration:none;color:inherit}
+.navbar{
+ position:fixed;top:0;width:100%;height:76px;z-index:10;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 6%;color:white;transition:.3s;
 }
-
-html {
-  scroll-behavior: smooth;
+.navbar.scrolled{background:white;color:#222;height:66px;
+ box-shadow:0 3px 15px #00000015}
+.logo{font-size:26px;font-weight:900;letter-spacing:4px}
+.navlinks{display:flex;gap:28px;list-style:none}
+.navlinks a{font-size:13px;font-weight:bold;position:relative}
+.navlinks a:after{content:"";position:absolute;left:0;bottom:-8px;
+ width:0;height:2px;background:#bd895f;transition:.25s}
+.navlinks a:hover:after{width:100%}
+.navlinks a:hover{color:#bd895f}
+.navright{display:flex;align-items:center;gap:18px}
+.navright button{border:0;background:none;color:inherit;font-weight:bold}
+.cart-count{background:#bd895f;color:white;border-radius:50%;
+ padding:3px 7px;font-size:11px}
+.menu-btn{display:none;border:0;background:none;color:inherit;font-size:25px}
+.hero{
+ min-height:650px;height:100vh;display:flex;align-items:center;
+ padding:100px 9%;color:white;
+ background:linear-gradient(90deg,#171512bd,#17151208),
+ url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1800")
+ center/cover;
 }
+.hero-content{max-width:570px}
+.eyebrow{letter-spacing:4px;font-size:12px;font-weight:bold;margin-bottom:20px}
+.hero h1{font-size:clamp(48px,7vw,88px);line-height:1.02;margin-bottom:20px}
+.hero p{font-size:17px;line-height:1.7;margin-bottom:30px}
+.btn{display:inline-block;border:0;background:#bd895f;color:white;
+ padding:15px 27px;font-size:12px;font-weight:bold;letter-spacing:1.5px;
+ transition:.25s}
+.btn:hover{background:#292522;transform:translateY(-2px)}
+section{padding:90px 7%;scroll-margin-top:65px}
+.men-section{background:#e4eee7;color:#263a30}
+.women-section{background:#f7e4e9;color:#593d45}
+.products-section{background:#faf9f6;color:#292522}
+.about-section{background:#eee6da;text-align:center}
+.contact-section{background:#dfe8f2;text-align:center}
+.section-head{text-align:center;margin-bottom:38px}
+.section-head small{letter-spacing:3px;font-weight:bold;font-size:11px}
+.section-head h2{font-size:34px;margin:12px 0}
+.section-head p{color:#777;font-size:14px}
+.toolbar{display:flex;justify-content:space-between;gap:15px;
+ flex-wrap:wrap;margin-bottom:28px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:10px 17px;border:1px solid #ccc;background:transparent;
+ font-size:12px;font-weight:bold}
+.filter-btn.active,.filter-btn:hover{background:#292522;color:white;
+ border-color:#292522}
+.search{padding:11px 14px;border:1px solid #ccc;background:white;
+ min-width:220px;outline:none}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.product{background:white;color:#292522;position:relative;overflow:hidden}
+.product-img{width:100%;height:290px;object-fit:cover;display:block;
+ background:#eee;transition:transform .4s}
+.product:hover .product-img{transform:scale(1.04)}
+.product-info{padding:16px}
+.product-category{font-size:10px;color:#888;letter-spacing:1px}
+.product h3{font-size:15px;margin:8px 0}
+.product-price{font-weight:bold;font-size:15px}
+.product-bottom{display:flex;align-items:center;justify-content:space-between;
+ margin-top:14px;gap:8px}
+.add-btn{background:#292522;color:white;border:0;padding:10px 12px;
+ font-size:11px;font-weight:bold}
+.add-btn:hover{background:#bd895f}
+.tag{position:absolute;top:12px;left:12px;background:#fff;
+ padding:7px 10px;font-size:10px;font-weight:bold;z-index:1}
+.empty{text-align:center;padding:40px;grid-column:1/-1;color:#777}
+.about-section p{max-width:650px;margin:15px auto;line-height:1.8}
+.contact-section p{margin:12px}
+footer{background:#24211e;color:white;text-align:center;padding:25px;
+ font-size:12px}
 
-body {
-  font-family: Arial, sans-serif;
-  background: #f8f7f4;
-  color: #222;
+/* CART DRAWER */
+.overlay{position:fixed;inset:0;background:#0008;z-index:20;display:none}
+.overlay.show{display:block}
+.drawer{position:fixed;right:-440px;top:0;height:100%;width:min(420px,100%);
+ background:white;z-index:21;padding:25px;transition:right .3s;
+ display:flex;flex-direction:column;color:#222}
+.drawer.show{right:0}
+.drawer-head{display:flex;justify-content:space-between;
+ align-items:center;padding-bottom:20px;border-bottom:1px solid #ddd}
+.close-btn{background:none;border:0;font-size:25px}
+.cart-items{overflow:auto;flex:1;padding:15px 0}
+.cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #eee}
+.cart-item img{width:85px;height:100px;object-fit:cover}
+.cart-details{flex:1}
+.cart-details h4{font-size:14px;margin-bottom:8px}
+.cart-details p{font-size:13px;margin-bottom:10px}
+.qty{display:flex;align-items:center;gap:12px}
+.qty button{width:25px;height:25px;border:1px solid #ddd;background:white}
+.remove{border:0;background:none;color:#a34a4a;font-size:12px;margin-top:10px}
+.cart-foot{border-top:1px solid #ddd;padding-top:20px}
+.total{display:flex;justify-content:space-between;font-weight:bold;
+ margin-bottom:18px}
+.full{width:100%}
+.checkout{display:none;padding:25px;background:white;position:fixed;
+ inset:0;z-index:30;overflow:auto}
+.checkout.show{display:block}
+.checkout-box{max-width:500px;margin:35px auto}
+.checkout-box input,.checkout-box textarea{
+ display:block;width:100%;padding:13px;margin:10px 0 18px;
+ border:1px solid #ccc
 }
-
-/* FIXED NAVIGATION */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 7%;
-  background: transparent;
-  color: white;
-  transition: all 0.35s ease;
+.checkout-box label{font-size:13px;font-weight:bold}
+.notice{padding:15px;background:#e4eee7;margin:15px 0;font-size:13px}
+@media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .navbar{padding:0 5%;height:65px}
+ .menu-btn{display:block;order:3}
+ .navlinks{display:none;position:absolute;top:100%;left:0;width:100%;
+ background:white;color:#222;flex-direction:column;gap:0;padding:10px 7%}
+ .navlinks.open{display:flex}
+ .navlinks li{padding:15px 0;border-bottom:1px solid #eee}
+ .navright{gap:12px}
+ .navright .search-link{display:none}
+ .hero{min-height:600px}
+ section{padding:70px 5%}
+ .grid{gap:12px}
+ .product-img{height:230px}
+ .product-info{padding:12px}
+ .product-bottom{align-items:flex-start;flex-direction:column}
+ .toolbar{flex-direction:column}
+ .search{width:100%}
 }
-
-/* NAVBAR WHEN SCROLLED */
-.navbar.scrolled {
-  background: #fff;
-  color: #222;
-  height: 68px;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-}
-
-/* LOGO */
-.logo {
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: 4px;
-  text-decoration: none;
-  color: inherit;
-}
-
-/* MENU */
-.nav-links {
-  display: flex;
-  gap: 35px;
-  list-style: none;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  position: relative;
-  padding: 10px 0;
-  transition: color 0.3s;
-}
-
-/* HOVER UNDERLINE */
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 2px;
-  left: 0;
-  background: #c18b58;
-  transition: width 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: #c18b58;
-}
-
-.nav-links a:hover::after {
-  width: 100%;
-}
-
-/* RIGHT SIDE */
-.nav-icons {
-  display: flex;
-  gap: 22px;
-  align-items: center;
-}
-
-.nav-icons a {
-  text-decoration: none;
-  color: inherit;
-  font-size: 14px;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.nav-icons a:hover {
-  color: #c18b58;
-}
-
-/* HERO */
-.hero {
-  height: 100vh;
-  min-height: 600px;
-  display: flex;
-  align-items: center;
-  padding: 0 10%;
-  color: white;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0,0,0,.65),
-      rgba(0,0,0,.05)
-    ),
-    url("https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=85")
-    center/cover no-repeat;
-}
-
-.hero-content {
-  max-width: 550px;
-  padding-top: 60px;
-}
-
-.hero h1 {
-  font-size: clamp(42px, 6vw, 76px);
-  line-height: 1.05;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  font-size: 17px;
-  line-height: 1.7;
-  margin-bottom: 30px;
-}
-
-.shop-btn {
-  display: inline-block;
-  padding: 16px 32px;
-  background: #c18b58;
-  color: white;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  transition: .3s;
-}
-
-.shop-btn:hover {
-  background: white;
-  color: #222;
-}
-
-/* CONTENT */
-section:not(.hero) {
-  padding: 100px 8%;
-  min-height: 65vh;
-  scroll-margin-top: 75px;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 34px;
-  margin-bottom: 45px;
-  letter-spacing: 2px;
-}
-
-.products {
-  display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-}
-
-.product {
-  background: white;
-  padding-bottom: 20px;
-  text-align: center;
-  transition: transform .3s;
-}
-
-.product:hover {
-  transform: translateY(-7px);
-}
-
-.product img {
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
-}
-
-.product h3 {
-  margin: 18px 0 8px;
-}
-
-.product p {
-  color: #98704d;
-  font-weight: bold;
-}
-
-#about {
-  background: #eee9e2;
-  text-align: center;
-  line-height: 1.8;
-}
-
-#contact {
-  text-align: center;
-  background: #282522;
-  color: white;
-}
-
-/* MOBILE MENU */
-.menu-toggle {
-  display: none;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-size: 27px;
-  cursor: pointer;
-}
-
-@media (max-width: 800px) {
-  .navbar {
-    padding: 0 5%;
-  }
-
-  .menu-toggle {
-    display: block;
-    order: 3;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: white;
-    color: #222;
-    flex-direction: column;
-    gap: 0;
-    padding: 15px 7%;
-    box-shadow: 0 8px 12px rgba(0,0,0,.1);
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .nav-links li {
-    padding: 12px 0;
-  }
-
-  .nav-icons {
-    gap: 12px;
-  }
-
-  .nav-icons a:first-child {
-    display: none;
-  }
-}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 
-<!-- NAVIGATION -->
 <nav class="navbar" id="navbar">
-  <a href="#home" class="logo">THREADS.</a>
-
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#home">HOME</a></li>
-    <li><a href="#men">MEN</a></li>
-    <li><a href="#women">WOMEN</a></li>
-    <li><a href="#about">ABOUT</a></li>
-    <li><a href="#contact">CONTACT</a></li>
-  </ul>
-
-  <div class="nav-icons">
-    <a href="#products">SEARCH</a>
-    <a href="#products">BAG (0)</a>
-  </div>
-
-  <button class="menu-toggle"
-    id="menuToggle"
-    aria-label="Toggle navigation"
-    aria-expanded="false">☰</button>
+ <a href="#home" class="logo">THREADS.</a>
+ <ul class="navlinks" id="navlinks">
+  <li><a href="#home">HOME</a></li>
+  <li><a href="#men">MEN</a></li>
+  <li><a href="#women">WOMEN</a></li>
+  <li><a href="#products">SHOP</a></li>
+  <li><a href="#about">ABOUT</a></li>
+  <li><a href="#contact">CONTACT</a></li>
+ </ul>
+ <div class="navright">
+  <button class="search-link" onclick="goShop()">SEARCH</button>
+  <button onclick="openCart()">BAG <span class="cart-count" id="cartCount">0</span></button>
+ </div>
+ <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
 </nav>
 
-<!-- HOME -->
 <header class="hero" id="home">
-  <div class="hero-content">
-    <h1>STYLE THAT<br> SPEAKS.</h1>
-    <p>
-      Discover the latest fashion trends.
-      Everyday essentials, timeless looks
-      and a style that is uniquely yours.
-    </p>
-    <a href="#products" class="shop-btn">
-      SHOP COLLECTION
-    </a>
-  </div>
+ <div class="hero-content">
+  <div class="eyebrow">NEW COLLECTION 2026</div>
+  <h1>WEAR YOUR<br>OWN STORY.</h1>
+  <p>Discover everyday essentials and statement pieces
+  made for your individual style.</p>
+  <a href="#products" class="btn">SHOP NOW →</a>
+ </div>
 </header>
 
-<!-- MEN -->
-<section id="men">
-  <h2 class="section-title">MEN'S COLLECTION</h2>
-  <div class="products">
-    <div class="product">
-      <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=700&q=80" alt="Men's casual clothing">
-      <h3>Casual Essentials</h3>
-      <p>From ₹1,299</p>
-    </div>
-    <div class="product">
-      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80" alt="Fashion outfit">
-      <h3>Streetwear</h3>
-      <p>From ₹1,899</p>
-    </div>
+<section id="men" class="men-section">
+ <div class="section-head">
+  <small>THE NEW EDIT</small>
+  <h2>MEN'S COLLECTION</h2>
+  <p>Everyday classics. Modern fits.</p>
+ </div>
+ <div class="grid" id="menGrid"></div>
+</section>
+
+<section id="women" class="women-section">
+ <div class="section-head">
+  <small>FIND YOUR STYLE</small>
+  <h2>WOMEN'S COLLECTION</h2>
+  <p>Fresh silhouettes and timeless favorites.</p>
+ </div>
+ <div class="grid" id="womenGrid"></div>
+</section>
+
+<section id="products" class="products-section">
+ <div class="section-head">
+  <small>CURATED FOR YOU</small>
+  <h2>SHOP ALL PRODUCTS</h2>
+  <p>Find something you'll love.</p>
+ </div>
+ <div class="toolbar">
+  <div class="filters">
+   <button class="filter-btn active" data-filter="All">ALL</button>
+   <button class="filter-btn" data-filter="Men">MEN</button>
+   <button class="filter-btn" data-filter="Women">WOMEN</button>
   </div>
+  <input class="search" id="search" placeholder="Search clothing..." />
+ </div>
+ <div class="grid" id="allGrid"></div>
 </section>
 
-<!-- WOMEN -->
-<section id="women">
-  <h2 class="section-title">WOMEN'S COLLECTION</h2>
-  <div class="products">
-    <div class="product">
-      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=80" alt="Women's fashion">
-      <h3>New Season</h3>
-      <p>From ₹1,499</p>
-    </div>
-    <div class="product">
-      <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=700&q=80" alt="Women's outfit">
-      <h3>Everyday Style</h3>
-      <p>From ₹1,699</p>
-    </div>
-  </div>
+<section id="about" class="about-section">
+ <div class="section-head">
+  <small>OUR STORY</small>
+  <h2>ABOUT THREADS</h2>
+ </div>
+ <p>Fashion is more than what you wear. It's how you
+ express yourself. THREADS brings together comfortable
+ essentials, modern design and styles for every day.</p>
 </section>
 
-<!-- PRODUCTS -->
-<section id="products">
-  <h2 class="section-title">FEATURED PRODUCTS</h2>
-  <p style="text-align:center">
-    Explore our latest arrivals and timeless favorites.
+<section id="contact" class="contact-section">
+ <div class="section-head">
+  <small>LET'S CONNECT</small>
+  <h2>CONTACT US</h2>
+ </div>
+ <p>Questions about an order or a product?</p>
+ <p>Email: hello@threads.example</p>
+ <p>Instagram: @threads.store</p>
+</section>
+
+<footer>© 2026 THREADS. All rights reserved.</footer>
+
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<aside class="drawer" id="drawer">
+ <div class="drawer-head">
+  <h2>YOUR BAG</h2>
+  <button class="close-btn" onclick="closeCart()">×</button>
+ </div>
+ <div class="cart-items" id="cartItems"></div>
+ <div class="cart-foot">
+  <div class="total"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+  <button class="btn full" onclick="checkout()">CHECKOUT →</button>
+  <p style="font-size:11px;color:#777;margin-top:12px">
+   Shipping and taxes calculated at checkout.
   </p>
-</section>
+ </div>
+</aside>
 
-<!-- ABOUT -->
-<section id="about">
-  <h2 class="section-title">ABOUT THREADS</h2>
-  <p>
-    We believe fashion is a way to express yourself.
-    Discover thoughtfully selected styles designed
-    for comfort, confidence and everyday life.
-  </p>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <h2 class="section-title">GET IN TOUCH</h2>
-  <p>Email: hello@threads.com</p>
-  <p style="margin-top:15px">
-    Follow us for new arrivals and fashion updates.
-  </p>
-</section>
+<div class="checkout" id="checkoutPage">
+ <div class="checkout-box">
+  <button class="close-btn" onclick="closeCheckout()">← Back to store</button>
+  <h2 style="margin:25px 0">CHECKOUT</h2>
+  <div class="notice">Demo checkout only. No real payment will be taken.</div>
+  <form id="checkoutForm">
+   <label>Full name</label>
+   <input required name="name" placeholder="Your name">
+   <label>Email address</label>
+   <input required type="email" name="email" placeholder="you@example.com">
+   <label>Phone number</label>
+   <input required type="tel" name="phone" placeholder="Phone number">
+   <label>Delivery address</label>
+   <textarea required name="address" rows="3" placeholder="Your full address"></textarea>
+   <div class="total"><span>Order total</span><span id="checkoutTotal">₹0</span></div>
+   <button class="btn full" type="submit">PLACE DEMO ORDER</button>
+  </form>
+ </div>
+</div>
 
 <script>
-const navbar = document.getElementById("navbar");
-const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
+const products = [
+ {id:1,name:"Classic White Shirt",cat:"Men",price:1299,
+ img:"https://images.unsplash.com/photo-1603252109303-2751441dd157?w=700",
+ tag:"BESTSELLER"},
+ {id:2,name:"Casual Denim Jacket",cat:"Men",price:2499,
+ img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=700",
+ tag:"NEW"},
+ {id:3,name:"Everyday T-Shirt",cat:"Men",price:799,
+ img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700",
+ tag:""},
+ {id:4,name:"Relaxed Streetwear",cat:"Men",price:1899,
+ img:"https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=700",
+ tag:"TRENDING"},
+ {id:5,name:"Floral Summer Dress",cat:"Women",price:1799,
+ img:"https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=700",
+ tag:"NEW"},
+ {id:6,name:"Classic Blazer",cat:"Women",price:2999,
+ img:"https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=700",
+ tag:""},
+ {id:7,name:"Everyday Chic",cat:"Women",price:1499,
+ img:"https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700",
+ tag:"POPULAR"},
+ {id:8,name:"Minimalist Outfit",cat:"Women",price:2199,
+ img:"https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=700",
+ tag:""}
+];
 
-// Change navbar on scroll
-function updateNavbar() {
-  if (window.scrollY > 50) {
-    navbar.classList.add("scrolled");
-  } else {
-    navbar.classList.remove("scrolled");
-  }
+let cart = [];
+let currentFilter = "All";
+let searchText = "";
+
+const money = n => "₹" + n.toLocaleString("en-IN");
+
+function card(p){
+ return `<article class="product">
+  ${p.tag ? `<span class="tag">${p.tag}</span>` : ""}
+  <img class="product-img" src="${p.img}" alt="${p.name}"
+   loading="lazy" onerror="this.src='https://placehold.co/500x600?text=Fashion'">
+  <div class="product-info">
+   <div class="product-category">${p.cat.toUpperCase()} / CLOTHING</div>
+   <h3>${p.name}</h3>
+   <div class="product-bottom">
+    <span class="product-price">${money(p.price)}</span>
+    <button class="add-btn" onclick="addToCart(${p.id})">ADD TO BAG +</button>
+   </div>
+  </div>
+ </article>`;
 }
 
-window.addEventListener("scroll", updateNavbar);
-updateNavbar();
+function render(){
+ document.getElementById("menGrid").innerHTML =
+  products.filter(p=>p.cat==="Men").map(card).join("");
+ document.getElementById("womenGrid").innerHTML =
+  products.filter(p=>p.cat==="Women").map(card).join("");
 
-// Mobile menu toggle
-menuToggle.addEventListener("click", () => {
-  const isOpen = navLinks.classList.toggle("active");
-  menuToggle.setAttribute("aria-expanded", isOpen);
-  menuToggle.textContent = isOpen ? "✕" : "☰";
-});
+ const shown=products.filter(p=>{
+  const matchesCategory=currentFilter==="All"||p.cat===currentFilter;
+  const matchesSearch=p.name.toLowerCase().includes(searchText.toLowerCase());
+  return matchesCategory&&matchesSearch;
+ });
+ document.getElementById("allGrid").innerHTML =
+  shown.length ? shown.map(card).join("") :
+  '<div class="empty">No products found. Try another search.</div>';
+}
 
-// Close menu after selecting a link
-document.querySelectorAll(".nav-links a").forEach(link => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("active");
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.textContent = "☰";
-  });
+function addToCart(id){
+ const p=products.find(x=>x.id===id);
+ const existing=cart.find(x=>x.id===id);
+ if(existing) existing.qty++;
+ else cart.push({...p,qty:1});
+ updateCart();
+}
+
+function updateCart(){
+ const count=cart.reduce((s,p)=>s+p.qty,0);
+ const total=cart.reduce((s,p)=>s+p.price*p.qty,0);
+ document.getElementById("cartCount").textContent=count;
+ document.getElementById("subtotal").textContent=money(total);
+ document.getElementById("checkoutTotal").textContent=money(total);
+
+ document.getElementById("cartItems").innerHTML=cart.length ?
+ cart.map(p=>`
+  <div class="cart-item">
+   <img src="${p.img}" alt="${p.name}">
+   <div class="cart-details">
+    <h4>${p.name}</h4>
+    <p>${money(p.price)}</p>
+    <div class="qty">
+     <button onclick="changeQty(${p.id},-1)">−</button>
+     <span>${p.qty}</span>
+     <button onclick="changeQty(${p.id},1)">+</button>
+    </div>
+    <button class="remove" onclick="removeItem(${p.id})">Remove</button>
+   </div>
+  </div>`).join("") :
+  '<div class="empty">Your bag is empty.<br><br>Explore our collection!</div>';
+}
+
+function changeQty(id,change){
+ const item=cart.find(p=>p.id===id);
+ if(!item)return;
+ item.qty+=change;
+ if(item.qty<=0)removeItem(id);
+ else updateCart();
+}
+function removeItem(id){
+ cart=cart.filter(p=>p.id!==id);
+ updateCart();
+}
+function openCart(){
+ document.getElementById("overlay").classList.add("show");
+ document.getElementById("drawer").classList.add("show");
+}
+function closeCart(){
+ document.getElementById("overlay").classList.remove("show");
+ document.getElementById("drawer").classList.remove("show");
+}
+function checkout(){
+ if(!cart.length){alert("Your bag is empty!");return;}
+ closeCart();
+ document.getElementById("checkoutPage").classList.add("show");
+}
+function closeCheckout(){
+ document.getElementById("checkoutPage").classList.remove("show");
+}
+document.getElementById("checkoutForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(!cart.length)return;
+ const name=new FormData(e.target).get("name");
+ alert("Thank you, "+name+"! Your demo order has been placed.");
+ cart=[];
+ updateCart();
+ e.target.reset();
+ closeCheckout();
 });
+function goShop(){
+ document.getElementById("products").scrollIntoView();
+ document.getElementById("search").focus({preventScroll:true});
+}
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  currentFilter=btn.dataset.filter;
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+ });
+});
+document.getElementById("search").addEventListener("input",e=>{
+ searchText=e.target.value;
+ render();
+});
+const navbar=document.getElementById("navbar");
+window.addEventListener("scroll",()=>{
+ navbar.classList.toggle("scrolled",window.scrollY>40);
+});
+const menuBtn=document.getElementById("menuBtn");
+const navlinks=document.getElementById("navlinks");
+menuBtn.addEventListener("click",()=>{
+ navlinks.classList.toggle("open");
+ menuBtn.textContent=navlinks.classList.contains("open")?"×":"☰";
+});
+navlinks.querySelectorAll("a").forEach(a=>{
+ a.addEventListener("click",()=>{
+  navlinks.classList.remove("open");
+  menuBtn.textContent="☰";
+ });
+});
+render();
+updateCart();
 </script>
-
 </body>
 </html>
